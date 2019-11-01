@@ -14,7 +14,7 @@ void shellGreet() { // Simply clears screen and displays authors.
 void parseTokens() { // TODO: Parse the user input into Tokens.
 
 }
-
+void anyText(){} //TODO: 
 void scanInput() {
     char* user = getenv("USER");
     char* directory = getenv("PWD");
