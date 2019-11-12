@@ -13,23 +13,27 @@ struct procStatus {
     int proId;          // the process id
     char status[512];
     int onExit;         // Status upon completion of execution
-}pro[50];
+}processes[50];
 
-void initStatii () {
+void initStatii () {        // Initialize the processes.
     for(int i =0; i < 50; i++) {
-        strcpy(pro[i].status,"");
-        pro[i].proId = -1;
-        pro[i].onExit = -1;
+        strcpy(processes[i].status,"");
+        processes[i].proId = -1;
+        processes[i].onExit = -1;
     }
 }
 
 int getProcess (int pid) {  // Gets the index of a certain process based on process id.
     for(int i = 0; i < 50; i++) {
-        if(pro[i].proId == pid) {
+        if(processes[i].proId == pid) {
             return i;
         }
     }
     return -1;              // Returns -1 if not found (failed to find process)
+}
+
+void updateProcesses () { // TODO: Populates the processes with current processes.
+
 }
 
 void shellGreet() { // Simply clears screen and displays authors.
@@ -39,7 +43,7 @@ void shellGreet() { // Simply clears screen and displays authors.
     printf("******************************************\n");
 }
 
-char * parseTokens(char *instructionString) { // Breaks up input into tokens
+char * parseTokens(char *instructionString) { // TODO: Breaks up input into tokens
     printf("this is the instructionString %s", instructionString);
     for(int i = 0; i > sizeof(instructionString); i++){
         
@@ -48,14 +52,6 @@ char * parseTokens(char *instructionString) { // Breaks up input into tokens
     return instructionString; // TODO: Parse the user input into Tokens.
 
 }
-
-void anyText(){
-
-} //TODO: 
-
-void variableAssignment(){
-
-} //TODO: 
 
 char * scanInput() {
     char *userInput;
