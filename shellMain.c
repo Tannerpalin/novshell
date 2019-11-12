@@ -4,6 +4,34 @@
 #include<sys/wait.h>
 #define clean() printf("\033[H\033[J")
 
+struct variableMap { // Map to store variables entered into terminal.
+    char varKey[512];
+    char varValue[512];
+}map[50];
+
+struct procStatus {
+    int proId;          // the process id
+    char status[512];
+    int onExit;         // Status upon completion of execution
+}pro[50];
+
+void initStatii () {
+    for(int i =0; i < 50; i++) {
+        strcpy(pro[i].status,"");
+        pro[i].proId = -1;
+        pro[i].onExit = -1;
+    }
+}
+
+int getProcess (int pid) {  // Gets the index of a certain process based on process id.
+    for(int i = 0; i < 50; i++) {
+        if(pro[i].proId == pid) {
+            return i;
+        }
+    }
+    return -1;              // Returns -1 if not found (failed to find process)
+}
+
 void shellGreet() { // Simply clears screen and displays authors.
     clean();
     printf("***************Novel Shell****************\n");
@@ -11,7 +39,7 @@ void shellGreet() { // Simply clears screen and displays authors.
     printf("******************************************\n");
 }
 
-char * parseTokens(char *instructionString) {
+char * parseTokens(char *instructionString) { // Breaks up input into tokens
     printf("this is the instructionString %s", instructionString);
     for(int i = 0; i > sizeof(instructionString); i++){
         
@@ -20,6 +48,7 @@ char * parseTokens(char *instructionString) {
     return instructionString; // TODO: Parse the user input into Tokens.
 
 }
+
 void anyText(){
 
 } //TODO: 
@@ -46,7 +75,7 @@ char * scanInput() {
 
 int main() {
     int quit = 0;
-    // TODO: Initialize variables buffers, make function calls.
+    // TODO: Initialize variables, buffers, and make function calls.
     shellGreet();
     
     while(!quit) {
