@@ -34,7 +34,7 @@ char* getVarVal (char* name) {
     int varIndex = getVarIndex(name);
     if(varIndex < 0) {
         char * error;
-        printf("ERROR: Could not find variable!"); // If variable not found, error!
+        perror("ERROR: Could not find variable!"); // If variable not found, error!
         error = "error_finding_value";
         return error;
     }
@@ -97,7 +97,7 @@ void displayProcesses () {
 void storePros () { // Populates the process array of structs with a current status.
     int * proPtr;
 
-    for(int i = 0; (i < 50); i++) {
+    for(int i = 0; (i < 50); i++) { // Might need to add another condition (processes != -1)
         int status = waitpid(processes[i].proId, proPtr, WNOHANG);
         if(status == 0) {
             continue;
@@ -137,44 +137,73 @@ void shellGreet() { // Simply clears screen and displays authors.
     printf("******************************************\n");
 }
 
-int parseTokens(char *instructionString, char** arguments) { // TODO: Breaks up input into tokens
+char* removeWhiteSpace(char *instructionString) { // Makes command line easier to parse.
     printf("this is the user input: %s\n", instructionString);
     int argCount = 0;
 
-    while(isspace(*instructionString)) {    // Destroying leading whitespaces in instruction.
+    while(isspace(*instructionString)) {    // Destroying leading whitespaces in command line.
         instructionString++;
     }
-    printf("this is the nice user input: %s\n", instructionString);
     instructionString[strlen(instructionString) - 1] = ' '; // Destroying the /n at the end.
 
-    return 1; // TODO: Parse the user input into Tokens.
+    return instructionString; 
 
+}
+
+char** allocateArgs (char ** args) { // Allocating and initializing space for cmd line args.
+    for(int i=0; i < 256; i++) {
+        args[i] = malloc(sizeof(char) * 256);
+    }
 }
 
 char * scanInput(char *prompt) {
     char *userInput;
-    userInput =  malloc(sizeof(userInput)*(256));
+    userInput =  malloc(sizeof(userInput)*(257));
     
-    printf("%s ", prompt); // Displays user and current directory
+    printf("%s ", prompt); // Displays prompt variable
     
     // TODO: Scan user input in, do not need to parse yet (Another function for parsing?).
-    fgets(userInput, 128, stdin);
-    
+    fgets(userInput, 256, stdin);
     
     return userInput;
+}
+
+int parseInput(char* cmdLine, char** args) {
+    int argNum = 0;
+    int isBG = 0;
+    allocateArgs(args);
+
+    char * delimiter;
+    int argSize;
+    while((delimiter = strchr(cmdLine, ' '))) { // While delimiter can be set to a space.
+        if(cmdLine[0] == '"') {     // If we are receiving a quoted token.
+            cmdLine++;
+            delimiter = strchr(cmdLine, '"'); // Goes to end of quote.
+        }
+        argSize = delimiter - cmdLine;
+        strncpy(args[argNum], cmdLine, argSize);
+        argNum++;
+        *delimiter = NULL;
+        cmdLine = delimiter + 1;
+        while((*cmdLine == ' ') && *cmdLine) { cmdLine++;} // Skip more whitespace.
+    }
+    args[argNum] = NULL; // End args with a NULL "argument".
+    for(int i = 0; args[i] != NULL; i++) {
+        printf("Token = %s\n", args[i]);
+    }
 }
 /* End of command line input and parsing methods */
 
 /* Start of command execution methods */
 void executeLine (char * userInput) {
-    int proType;                // Run in the background or foreground?
-    char commandLine[128];      // Holds the command line
-    char * arguments[128];      // Holds the tokens from the command line
+    char commandLine[256];      // Holds the command line
+    char * arguments[256];      // Holds the tokens from the command line
     pid_t proID;                // Behold the mighty process ID.
 
-    strcpy(commandLine, userInput);
-
-    proType = parseTokens(commandLine, arguments);
+    strcpy(commandLine, removeWhiteSpace(userInput));
+    
+    int proType = parseInput(commandLine, arguments); // Decides if <bg> was used and parses.
+    
 
 }
 
