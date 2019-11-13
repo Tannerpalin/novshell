@@ -128,8 +128,7 @@ void newProcess(char* status, int id) {
 }
 /* End of the background process methods */
 
-
-
+/* Start of command line input and parsing methods */
 void shellGreet() { // Simply clears screen and displays authors.
     clean();
     printf("***************Novel Shell****************\n");
@@ -156,27 +155,25 @@ char * scanInput(char *prompt) {
     // TODO: Scan user input in, do not need to parse yet (Another function for parsing?).
     fgets(userInput, 128, stdin);
     
-    //printf("%ld",sizeof(userInput));    
-    //printf("%s\n", userInput);
-
     
     return userInput;
 }
+/* End of command line input and parsing methods */
 
+/* Start of command execution methods */
+
+/* End of command execution methods */
 int main() {
     int quit = 0;
     char * inputToConsole;
     // TODO: Initialize variables, buffers, and make function calls.
+    varMapInit();
+    initPros();
     shellGreet();
     
     while(!quit) {
 
-        if(strcmp(varMap[0].varKey, "PROMPT") == 0) {
-            inputToConsole = scanInput(varMap[0].varValue);
-        }
-        else { inputToConsole = scanInput("$"); }
-        
-        // printf("%s\n", inputToConsole);
+        inputToConsole = scanInput(varMap[0].varValue);
         if(strncmp(inputToConsole, "bye",3) == 0){
             quit = 1;
         }
