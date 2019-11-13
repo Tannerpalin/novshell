@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <string.h>
 #include<sys/wait.h>
 #define clean() printf("\033[H\033[J")
 
@@ -93,7 +94,7 @@ void displayProcesses () {
     }
 }
 
-void storePros () { // Populates the processes with a current status.
+void storePros () { // Populates the process array of structs with a current status.
     int * proPtr;
 
     for(int i = 0; (i < 50); i++) {
@@ -136,13 +137,17 @@ void shellGreet() { // Simply clears screen and displays authors.
     printf("******************************************\n");
 }
 
-char * parseTokens(char *instructionString) { // TODO: Breaks up input into tokens
-    printf("this is the instructionString %s", instructionString);
-    for(int i = 0; i > sizeof(instructionString); i++){
-        
+int parseTokens(char *instructionString, char** arguments) { // TODO: Breaks up input into tokens
+    printf("this is the user input: %s\n", instructionString);
+    int argCount = 0;
+
+    while(isspace(*instructionString)) {    // Destroying leading whitespaces in instruction.
+        instructionString++;
     }
-    
-    return instructionString; // TODO: Parse the user input into Tokens.
+    printf("this is the nice user input: %s\n", instructionString);
+    instructionString[strlen(instructionString) - 1] = ' '; // Destroying the /n at the end.
+
+    return 1; // TODO: Parse the user input into Tokens.
 
 }
 
@@ -161,6 +166,17 @@ char * scanInput(char *prompt) {
 /* End of command line input and parsing methods */
 
 /* Start of command execution methods */
+void executeLine (char * userInput) {
+    int proType;                // Run in the background or foreground?
+    char commandLine[128];      // Holds the command line
+    char * arguments[128];      // Holds the tokens from the command line
+    pid_t proID;                // Behold the mighty process ID.
+
+    strcpy(commandLine, userInput);
+
+    proType = parseTokens(commandLine, arguments);
+
+}
 
 /* End of command execution methods */
 int main() {
@@ -177,8 +193,7 @@ int main() {
         if(strncmp(inputToConsole, "bye",3) == 0){
             quit = 1;
         }
-        char * successOrFailure = parseTokens(inputToConsole);
-
-        }
+        executeLine(inputToConsole);
+    }
     return 0;
 }
