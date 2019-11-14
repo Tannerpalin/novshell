@@ -304,8 +304,19 @@ int executeLine (char * userInput) {
             }
         }
     }
-    else if((strcmp(arguments[0], "assignto") == 0)) {
-
+    else if((strcmp(arguments[0], "assignto") == 0) && (arguments[1] != NULL )) {
+        if((proID = fork()) == 0) { 
+            if((execvp(arguments[1], parameters)) == -1) {
+                printf("ERROR: Command not found!\n");
+                exit(0);
+            }
+        }
+        if(proType == 0) {                  // If process is to run in the foreground.
+            waitpid(proID, await,0);
+            if(await == -1) {
+                printf("ERROR: Error during child process runtime.\n");
+            }
+        }
 
     }
         
