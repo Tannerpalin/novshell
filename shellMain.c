@@ -256,9 +256,12 @@ int checkBuiltIns(char** args) {
 int executeLine (char * userInput) {
     char commandLine[256];      // Holds the command line
     char * arguments[256];      // Holds the tokens from the command line
+    char * parameters[256];
     pid_t proID;                // Behold the mighty process ID.
     int* await;                  // Status after waiting for foreground process.
 
+    allocateArgs(parameters);
+    
     strcpy(commandLine, removeWhiteSpace(userInput));
     
     int proType = parseInput(commandLine, arguments); // Decides if <bg> was used and parses.
@@ -271,12 +274,21 @@ int executeLine (char * userInput) {
         return -1;
     }
     int builtIn = checkBuiltIns(arguments);
+
+    int q = 0;
+    for(int i = 1; (i < 256) && (arguments[i] != NULL); i++) {
+        strcpy(parameters[q], arguments[i]);
+        q++;
+    }
+    parameters[q] = 0x0;
+    q = 0;
+
     if(builtIn == 0 && (strcmp(arguments[0], "bye") != 0)) {                      // Not a built-in command, must fork and exec.
         // TODO: fork and exec stuff
         printf("test: %s\n", arguments[0]);
     if((strcmp(arguments[0], "run") == 0)) {
-        if((proID = fork()) == 0) {   
-            if((execvp(arguments[1], arguments)) == -1) {
+        if((proID = fork()) == 0) { 
+            if((execvp(arguments[1], parameters)) == -1) {
                 printf("ERROR: Command not found!\n");
                 exit(0);
             }
