@@ -18,6 +18,8 @@ void varMapInit () {    // Initializes our variable map.
         strcpy(varMap[j].varValue,"");
         strcpy(varMap[j].varKey,"");
     }
+    strcpy(varMap[7].varValue,"Valuefound");
+    strcpy(varMap[7].varKey,"test");
 }
 
 int getVarIndex (char* name) { // Returns the index of a variable if key already exists.
@@ -38,7 +40,7 @@ char* getVarVal (char* name) {
         error = "error_finding_value";
         return error;
     }
-    char* value;
+    char* value = malloc(sizeof(varMap[varIndex].varValue));
     strcpy(value, varMap[varIndex].varValue);
     return value;
 }
@@ -133,7 +135,7 @@ void newProcess(char* status, int id) {
 void shellGreet() { // Simply clears screen and displays authors.
     clean();
     printf("***************Novel Shell****************\n");
-    printf("  Authors: Tanner Palin and Will Shapiro\n");
+    printf("* Authors: Tanner Palin and Will Shapiro *\n");
     printf("******************************************\n");
 }
 
@@ -158,7 +160,7 @@ char** allocateArgs (char ** args) { // Allocating and initializing space for cm
 
 char * scanInput(char *prompt) {
     char *userInput;
-    userInput =  malloc(sizeof(userInput)*(257));
+    userInput =  malloc(sizeof(userInput)*(256));
     
     printf("%s ", prompt); // Displays prompt variable
     
@@ -166,6 +168,25 @@ char * scanInput(char *prompt) {
     fgets(userInput, 256, stdin);
     
     return userInput;
+}
+
+void checkTokens(char ** args, int numArgs) { // Checking to see if token = variable, replacing it if so.
+    int varIndex = 0;
+    char * varName;
+    int varSize = 0;
+    for(int i = 0; i < numArgs; i++) { // LIMITATION: Cannot use variable in quotes unless it is first item.
+        varSize = strlen(args[i]);
+        if(args[i][0] == '$') {
+            varName = (char*)args[i] + 1;
+            varIndex = getVarIndex(varName);
+            if(varIndex == -1) {
+                printf("ERROR: variable $%s does not exist.\n", varName);
+            }
+            else {
+                strcpy(args[i], getVarVal(varName));
+            }
+        }
+    }
 }
 
 int parseInput(char* cmdLine, char** args) {
@@ -183,14 +204,19 @@ int parseInput(char* cmdLine, char** args) {
         argSize = delimiter - cmdLine;
         strncpy(args[argNum], cmdLine, argSize);
         argNum++;
-        *delimiter = NULL;
+        *delimiter = NULL;          // Seq fault protection.
         cmdLine = delimiter + 1;
         while((*cmdLine == ' ') && *cmdLine) { cmdLine++;} // Skip more whitespace.
     }
     args[argNum] = NULL; // End args with a NULL "argument".
+    checkTokens(args, argNum);
     for(int i = 0; args[i] != NULL; i++) {
-        printf("Token = %s\n", args[i]);
+        if(strcmp(args[i], "<bg>") == 0) {
+            isBG = 1;
+            printf("background process detected!\n");
+        }
     }
+    return isBG;
 }
 /* End of command line input and parsing methods */
 
@@ -203,7 +229,9 @@ void executeLine (char * userInput) {
     strcpy(commandLine, removeWhiteSpace(userInput));
     
     int proType = parseInput(commandLine, arguments); // Decides if <bg> was used and parses.
-    
+    if(arguments[0] == NULL) {
+        return;
+    }
 
 }
 
