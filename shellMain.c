@@ -140,14 +140,14 @@ void shellGreet() { // Simply clears screen and displays authors.
     printf("******************************************\n");
 }
 
-char* removeWhiteSpace(char *instructionString) { // Makes command line easier to parse.
+char* removeWhiteSpace(char *instructionString) {   // Function makes command line input easier to parse.
     printf("this is the user input: %s\n", instructionString);
     int argCount = 0;
 
     while(isspace(*instructionString)) {    // Destroying leading whitespaces in command line.
         instructionString++;
     }
-    instructionString[strlen(instructionString) - 1] = ' '; // Destroying the /n at the end.
+    instructionString[strlen(instructionString) - 1] = ' '; // Destroying the /n at the end of input.
 
     return instructionString; 
 
@@ -159,15 +159,18 @@ char** allocateArgs (char ** args) { // Allocating and initializing space for cm
     }
 }
 
-char * scanInput(char *prompt) {
+char * scanInput(char *prompt) {    //Scan user input in, parsing is done in another function.
     char *userInput;
     userInput =  malloc(sizeof(userInput)*(256));
     
     printf("%s ", prompt); // Displays prompt variable
     
-    // TODO: Scan user input in, do not need to parse yet (Another function for parsing?).
-    fgets(userInput, 256, stdin);
     
+    fgets(userInput, 256, stdin);
+    if(feof(stdin)) {
+        printf("\n");
+        exit(0);
+        }
     return userInput;
 }
 
@@ -272,8 +275,8 @@ int executeLine (char * userInput) {
         // TODO: fork and exec stuff
         printf("test: %s\n", arguments[0]);
     if((strcmp(arguments[0], "run") == 0)) {
-        if((proID = fork()) == 0) {   // Forced child labor, labor laws do not exist here.
-            if((execvp(arguments[1], arguments[2])) == -1) {
+        if((proID = fork()) == 0) {   
+            if((execvp(arguments[1], arguments)) == -1) {
                 printf("ERROR: Command not found!\n");
                 exit(0);
             }
@@ -290,7 +293,7 @@ int executeLine (char * userInput) {
         }
     }
     else if((strcmp(arguments[0], "assignto") == 0)) {
-        
+
 
     }
         
