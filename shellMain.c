@@ -205,11 +205,11 @@ int parseInput(char* cmdLine, char** args) {
         argSize = delimiter - cmdLine;
         strncpy(args[argNum], cmdLine, argSize);
         argNum++;
-        *delimiter = NULL;          // Seq fault protection.
+        *delimiter = NULL;          // Seg fault protection.
         cmdLine = delimiter + 1;
         while((*cmdLine == ' ') && *cmdLine) { cmdLine++;} // Skip more whitespace.
     }
-    args[argNum] = NULL; // End args with a NULL "argument".
+    args[argNum] = NULL; // End args with a NULL "argument" so we can use execvp().
     checkTokens(args, argNum);
     for(int i = 0; args[i] != NULL; i++) {
         if(strcmp(args[i], "<bg>") == 0) {
@@ -217,7 +217,7 @@ int parseInput(char* cmdLine, char** args) {
             printf("background process detected!\n");
         }
     }
-    return isBG;
+    return isBG;    // Returns 1 if command is meant to run in background, returns 0 if not.
 }
 /* End of command line input and parsing methods */
 
@@ -246,27 +246,56 @@ int checkBuiltIns(char** args) {
         displayProcesses();
         return 1;
     }
-    return 0; // Return 0 if no built in commands are found.
+    return 0; // Return 0 if none of the built-in commands are found.
 }
 
 
-void executeLine (char * userInput) {
+int executeLine (char * userInput) {
     char commandLine[256];      // Holds the command line
     char * arguments[256];      // Holds the tokens from the command line
     pid_t proID;                // Behold the mighty process ID.
+    int* await;                  // Status after waiting for foreground process.
 
     strcpy(commandLine, removeWhiteSpace(userInput));
     
     int proType = parseInput(commandLine, arguments); // Decides if <bg> was used and parses.
+    
     if(arguments[0] == NULL) {
-        return;                 // No commands? Just return.
+        return 0;                 // No commands in line? Just return all good.
     }
 
+    if(strcmp(arguments[0], "bye") == 0) {
+        return -1;
+    }
     int builtIn = checkBuiltIns(arguments);
-    if(builtIn == 0) {
+    if(builtIn == 0 && (strcmp(arguments[0], "bye") != 0)) {                      // Not a built-in command, must fork and exec.
         // TODO: fork and exec stuff
+        printf("test: %s\n", arguments[0]);
+    if((strcmp(arguments[0], "run") == 0)) {
+        if((proID = fork()) == 0) {   // Forced child labor, labor laws do not exist here.
+            if((execvp(arguments[1], arguments[2])) == -1) {
+                printf("ERROR: Command not found!\n");
+                exit(0);
+            }
+        }
+
+        if(proType == 1) {
+            newProcess("Running in background.", proID);
+        }
+        else if(proType == 0) {                  // If process is to run in the foreground.
+            waitpid(proID, await,0);
+            if(await == -1) {
+                printf("ERROR: Error during child process runtime.\n");
+            }
+        }
+    }
+    else if((strcmp(arguments[0], "assignto") == 0)) {
+        
+
+    }
         
     }
+    return 0;
 }
 
 /* End of command execution methods */
@@ -278,11 +307,11 @@ int main() {
     initPros();
     shellGreet();
     
-    while(!quit) {
+    while(quit != -1) {
 
         inputToConsole = scanInput(varMap[0].varValue);
         if(strncmp(inputToConsole, "bye",3) == 0){
-            quit = 1;
+            break;
         }
         executeLine(inputToConsole);
     }
