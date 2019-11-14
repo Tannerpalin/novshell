@@ -12,7 +12,7 @@ struct variableMap { // Map to store variables entered into terminal.
 }varMap[50];
 
 void varMapInit () {    // Initializes our variable map.
-    strcpy(varMap[0].varValue,"$");     // varMap[0] will be used to hold the prompt prefix.
+    strcpy(varMap[0].varValue,"novsh >");     // varMap[0] will be used to hold the prompt prefix.
     strcpy(varMap[0].varKey,"PROMPT");
     for(int j = 1; j < 50; j++) {
         strcpy(varMap[j].varValue,"");
@@ -221,6 +221,23 @@ int parseInput(char* cmdLine, char** args) {
 /* End of command line input and parsing methods */
 
 /* Start of command execution methods */
+int checkBuiltIns(char** args) {
+    if(strcmp(args[0], "!") == 0) {
+        return 1;
+    }
+    else if(strcmp(args[1], "=") == 0) {
+            
+        addVar(args[0], args[2]);
+        return 1;
+    }
+    else if(strcmp(args[0], "newprompt") == 0) {
+        addVar("PROMPT", args[1]);
+        return 1;
+    }
+    return 0; // Return 0 if no built in commands are found.
+}
+
+
 void executeLine (char * userInput) {
     char commandLine[256];      // Holds the command line
     char * arguments[256];      // Holds the tokens from the command line
@@ -230,9 +247,13 @@ void executeLine (char * userInput) {
     
     int proType = parseInput(commandLine, arguments); // Decides if <bg> was used and parses.
     if(arguments[0] == NULL) {
-        return;
+        return;                 // No commands? Just return.
     }
 
+    int builtIn = checkBuiltIns(arguments);
+    if(builtIn == 0) {
+        // TODO: fork and exec stuff
+    }
 }
 
 /* End of command execution methods */
