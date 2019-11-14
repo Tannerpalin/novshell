@@ -79,6 +79,7 @@ void initPros () {        // Initialize all the processes with placeholder value
         processes[i].proId = -1;
         processes[i].onExit = -1;
     }
+    
 }
 
 int getProcess (int pid) {  // Gets the index of a certain process based on the process id.
@@ -225,13 +226,24 @@ int checkBuiltIns(char** args) {
     if(strcmp(args[0], "!") == 0) {
         return 1;
     }
-    else if(strcmp(args[1], "=") == 0) {
-            
+    else if((args[1] != NULL) && (args[2] != NULL) && (strcmp(args[1], "=") == 0)) {
         addVar(args[0], args[2]);
         return 1;
     }
-    else if(strcmp(args[0], "newprompt") == 0) {
+    else if((strcmp(args[0], "newprompt") == 0) && (args[0] != NULL)) {
         addVar("PROMPT", args[1]);
+        return 1;
+    }
+    else if((strcmp(args[0], "dir") == 0) && (args[1] != NULL)) { // Needs Testing.
+        int success = chdir(args[1]);
+        if(success == 0) {
+            return 1;
+        }
+        printf("ERROR: Directory not found!\n");
+        return 1;
+    }
+    else if(strcmp(args[0], "listprocs") == 0) {
+        displayProcesses();
         return 1;
     }
     return 0; // Return 0 if no built in commands are found.
@@ -253,6 +265,7 @@ void executeLine (char * userInput) {
     int builtIn = checkBuiltIns(arguments);
     if(builtIn == 0) {
         // TODO: fork and exec stuff
+        
     }
 }
 
