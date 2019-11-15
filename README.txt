@@ -10,7 +10,7 @@ Tanner Palin and Will Shapiro
 #### Use 'make' to compile shell and 'make clean' to remove the shell's executable.
 
 #### Limitations
-This program has limitations for larger inputs as well as extensive background processes. Things such as running gdb and vim in the background have been known to cause issues as freeze the program.
+This program has limitations for larger inputs as well as extensive background processes. Things such as running gdb and vim in the background have been known to cause issues such as freezing the program.
 
 #### Acceptable command list:
 
