@@ -305,21 +305,44 @@ int executeLine (char * userInput) {
         }
     }
     else if((strcmp(arguments[0], "assignto") == 0) && (arguments[1] != NULL )) {
+        for(int j = 2; ( j < 256 ) && (arguments[j] != NULL) ;j++) {
+            strcpy(parameters[q], arguments[j]);
+            q++;
+        }
+        parameters[q] = 0x0;
+        q = 0;
+
+        int pipefd[2];
+        pipe(pipefd);
+    
         if((proID = fork()) == 0) { 
-            if((execvp(arguments[1], parameters)) == -1) {
+            close(pipefd[0]);    // close reading end in the child
+
+            dup2(pipefd[1], 1);  // send stdout to the pipe
+            dup2(pipefd[1], 2);  // send stderr to the pipe
+
+            close(pipefd[1]);    // this descriptor is no longer needed
+            if((execvp(arguments[2], parameters)) == -1) {
                 printf("ERROR: Command not found!\n");
                 exit(0);
             }
         }
-        if(proType == 0) {                  // If process is to run in the foreground.
-            waitpid(proID, await,0);
+        else {
+            char assignBuf[256];
+            close(pipefd[1]);
+            while (read(pipefd[0], assignBuf, sizeof(assignBuf)) != 0)
+            {
+            }
+            for(int i = 0; i < sizeof(assignBuf); i++) {
+            }
+            addVar(arguments[1], assignBuf);
+        }
+                          
+            waitpid(proID, await,0);        // Process is to run in the foreground.
             if(await == -1) {
                 printf("ERROR: Error during child process runtime.\n");
             }
-        }
-
-    }
-        
+        }  
     }
     return 0;
 }
