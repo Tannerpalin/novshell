@@ -1,0 +1,84 @@
+$PATH
+0 total
+NX
+bin
+games
+include
+lib
+lib32
+libexec
+libx32
+local
+locale
+sbin
+share
+src
+total 40
+4 drwx------ 2 tcpa227 4096 Nov 13 23:14 VSCode Crashes/
+0 -rw------- 1 tcpa227    0 Nov 13 23:13 config-err-JUlKek
+4 drwx------ 2 tcpa227 4096 Nov 13 23:14 net-export/
+0 prwx------ 1 tcpa227    0 Nov 14 19:28 pipe_client_request_4088_2|
+0 prwx------ 1 tcpa227    0 Nov 14 19:28 pipe_client_response_4088_2|
+0 prwx------ 1 tcpa227    0 Nov 14 19:28 pipe_server_request_4088_2|
+0 prwx------ 1 tcpa227    0 Nov 14 19:28 pipe_server_response_4088_2|
+4 drwx------ 2 tcpa227 4096 Nov 13 23:13 ssh-m6zyG5jgbePJ/
+4 drwx------ 3 root    4096 Nov 13 23:12 systemd-private-78d2e8504519443ba2b0b326df85c630-ModemManager.service-4xtUwP/
+4 drwx------ 3 root    4096 Nov 13 23:13 systemd-private-78d2e8504519443ba2b0b326df85c630-bolt.service-PlS8qG/
+4 drwx------ 3 root    4096 Nov 13 23:12 systemd-private-78d2e8504519443ba2b0b326df85c630-colord.service-wwOmhE/
+4 drwx------ 3 root    4096 Nov 13 23:15 systemd-private-78d2e8504519443ba2b0b326df85c630-fwupd.service-WAR4EQ/
+4 drwx------ 3 root    4096 Nov 13 23:12 systemd-private-78d2e8504519443ba2b0b326df85c630-rtkit-daemon.service-SC6JWB/
+4 drwx------ 3 root    4096 Nov 13 23:12 systemd-private-78d2e8504519443ba2b0b326df85c630-systemd-resolved.service-75jBcq/
+4 drwx------ 3 root    4096 Nov 13 23:12 systemd-private-78d2e8504519443ba2b0b326df85c630-systemd-timesyncd.service-iiyc1q/
+[H[J***************Novel Shell****************
+* Authors: Tanner Palin and Will Shapiro *
+******************************************
+novsh > this is the user input: PATH = "/bin:/usr/bin"
+
+novsh > this is the user input: HomeDir = "/home/mylogin"
+
+novsh > this is the user input: Myfile = "fileA"
+
+novsh > this is the user input: Filebase = "paper"
+
+novsh > this is the user input: ShowTokens = "1"
+
+novsh > this is the user input: run echo $PATH
+
+ERROR: variable $PATH does not exist.
+test: run
+novsh > this is the user input: dir /usr/bin
+
+novsh > this is the user input: dir ./bin
+
+ERROR: Directory not found!
+novsh > this is the user input: dir ../misc/oldstuff
+
+ERROR: Directory not found!
+novsh > this is the user input: dir /usr
+
+novsh > this is the user input: dir $HomeDir
+
+ERROR: variable $HomeDir does not exist.
+ERROR: Directory not found!
+novsh > this is the user input: run /usr/bin/wc -l $Myfile
+
+ERROR: variable $Myfile does not exist.
+test: run
+novsh > this is the user input: run wc -l f1 f2 f3 <bg>
+
+background process detected!
+test: run
+novsh > this is the user input: assignto TextFile /bin/echo -e $Filebase "\b.txt"
+
+ERROR: variable $Filebase does not exist.
+test: assignto
+novsh > this is the user input: run cat $TextFile
+
+test: run
+novsh > this is the user input: run /bin/ls
+
+test: run
+novsh > this is the user input: run ls -l -F -g -s /tmp
+
+test: run
+novsh > 

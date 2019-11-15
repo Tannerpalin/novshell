@@ -141,7 +141,6 @@ void shellGreet() { // Simply clears screen and displays authors.
 }
 
 char* removeWhiteSpace(char *instructionString) {   // Function makes command line input easier to parse.
-    printf("this is the user input: %s\n", instructionString);
     int argCount = 0;
 
     while(isspace(*instructionString)) {    // Destroying leading whitespaces in command line.
@@ -351,7 +350,7 @@ int executeLine (char * userInput) {
 int main() {
     int quit = 0;
     char * inputToConsole;
-    // TODO: Initialize variables, buffers, and make function calls.
+
     varMapInit();
     initPros();
     shellGreet();
